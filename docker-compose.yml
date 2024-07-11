@@ -10,7 +10,21 @@ services:
       POSTGRES_PASSWORD: ${JOURNEY_DATABASE_PSWD:-josnei123}
     volumes:
       - 'db:/var/lib/posgresql/data'
+  pgadmin:
+    depends_on:
+      - 'db'
+    image: 'dpage/pgadmin4:latest'
+    restart: 'unless-stopped'
+    ports:
+      - '5433:80'
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${JOURNEY_PGADMIN_EMAIL:-journey@nlw.com}
+      PGADMIN_DEFAULT_PASSWORD: ${JOURNEY_PGADMIN_PSWD:-password}
+    volumes:
+      - 'pgadmin:/var/lib/pgadmin'
   app:
+    depends_on:
+      - 'db'
     build: '.'
     ports:
       - '8080:8080'
@@ -20,9 +34,9 @@ services:
       JOURNEY_DATABASE_NAME: ${JOURNEY_DATABASE_NAME:-nlw_journey}
       JOURNEY_DATABASE_USER: ${JOURNEY_DATABASE_USER:-j587893}
       JOURNEY_DATABASE_PSWD: ${JOURNEY_DATABASE_PSWD:-josnei123}
-    depends_on:
-      - 'db'
 
 volumes:
   db:
+    driver: 'local'
+  pgadmin:
     driver: 'local'
