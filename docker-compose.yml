@@ -5,11 +5,23 @@ services:
     ports:
       - '5432:5432'
     environment:
-      POSTGRES_DB: 'nlw_journey'
-      POSTGRES_USER: 'j587893'
-      POSTGRES_PASSWORD: 'josnei123'
+      POSTGRES_DB: ${JOURNEY_DATABASE_NAME:-nlw_journey}
+      POSTGRES_USER: ${JOURNEY_DATABASE_USER:-j587893}
+      POSTGRES_PASSWORD: ${JOURNEY_DATABASE_PSWD:-josnei123}
     volumes:
       - 'db:/var/lib/posgresql/data'
+  app:
+    build: '.'
+    ports:
+      - '8080:8080'
+    environment:
+      JOURNEY_DATABASE_HOST: 'db'
+      JOURNEY_DATABASE_PORT: ${JOURNEY_DATABASE_PORT:-5432}
+      JOURNEY_DATABASE_NAME: ${JOURNEY_DATABASE_NAME:-nlw_journey}
+      JOURNEY_DATABASE_USER: ${JOURNEY_DATABASE_USER:-j587893}
+      JOURNEY_DATABASE_PSWD: ${JOURNEY_DATABASE_PSWD:-josnei123}
+    depends_on:
+      - 'db'
 
 volumes:
   db:
