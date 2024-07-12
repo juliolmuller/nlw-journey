@@ -16,15 +16,26 @@ services:
     image: 'dpage/pgadmin4:latest'
     restart: 'unless-stopped'
     ports:
-      - '5433:80'
+      - '8081:80'
     environment:
       PGADMIN_DEFAULT_EMAIL: ${JOURNEY_PGADMIN_EMAIL:-journey@nlw.com}
       PGADMIN_DEFAULT_PASSWORD: ${JOURNEY_PGADMIN_PSWD:-password}
     volumes:
       - 'pgadmin:/var/lib/pgadmin'
+  mail:
+    image: 'axllent/mailpit:latest'
+    restart: 'unless-stopped'
+    ports:
+      - '1025:1025'
+      - '8082:8025'
+    environment:
+      MP_DATABASE: '/data/mailpit.db'
+    volumes:
+      - 'mail:/data'
   app:
     depends_on:
       - 'db'
+      - 'mail'
     build: '.'
     ports:
       - '8080:8080'
@@ -39,4 +50,6 @@ volumes:
   db:
     driver: 'local'
   pgadmin:
+    driver: 'local'
+  mail:
     driver: 'local'
