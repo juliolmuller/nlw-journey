@@ -26,7 +26,7 @@ func (q *Queries) CreateTrip(
 
 	tripID, err := qtx.InsertTrip(ctx, InsertTripParams{
 		Destination: params.Destination,
-		OwnerEmail:  string(params.OwnerEmail),
+		OwnerEmail:  params.OwnerEmail,
 		OwnerName:   params.OwnerName,
 		StartsAt:    pgtype.Timestamp{Valid: true, Time: params.StartsAt},
 		EndsAt:      pgtype.Timestamp{Valid: true, Time: params.EndsAt},
@@ -39,7 +39,7 @@ func (q *Queries) CreateTrip(
 	for i, eti := range params.EmailsToInvite {
 		participants[i] = InviteParticipantsToTripParams{
 			TripID: tripID,
-			Email:  string(eti),
+			Email:  eti,
 		}
 	}
 

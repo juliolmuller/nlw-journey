@@ -28,6 +28,9 @@
             "format": "email",
             "x-go-extra-tags": {
               "validate": "required,email"
+            },
+            "x-go-type": {
+              "type": "string"
             }
           }
         },
@@ -230,7 +233,10 @@
             "type": "array",
             "items": {
               "type": "string",
-              "format": "email"
+              "format": "email",
+              "x-go-type": {
+                "type": "string"
+              }
             },
             "x-go-extra-tags": {
               "validate": "required,dive,email"
@@ -247,6 +253,9 @@
             "format": "email",
             "x-go-extra-tags": {
               "validate": "required,email"
+            },
+            "x-go-type": {
+              "type": "string"
             }
           }
         },
@@ -376,7 +385,10 @@
           },
           "email": {
             "type": "string",
-            "format": "email"
+            "format": "email",
+            "x-go-type": {
+              "type": "string"
+            }
           },
           "is_confirmed": {
             "type": "boolean"
