@@ -16,23 +16,26 @@ import (
 )
 
 type Store interface {
-	GetParticipant(ctx context.Context, participantID uuid.UUID) (pgstore.Participant, error)
-	ConfirmParticipant(ctx context.Context, participantId uuid.UUID) error
+	CreateTrip(context.Context, *pgxpool.Pool, spec.CreateTripRequest) (uuid.UUID, error)
+	GetParticipant(context.Context, uuid.UUID) (pgstore.Participant, error)
+	ConfirmParticipant(context.Context, uuid.UUID) error
 }
 
 type API struct {
 	store     Store
 	logger    *zap.Logger
 	validator *validator.Validate
+	pool      *pgxpool.Pool
 }
 
 func NewAPI(pool *pgxpool.Pool, logger *zap.Logger) API {
 	validator := validator.New(validator.WithRequiredStructEnabled())
-
+	store := pgstore.New(pool)
 	return API{
-		pgstore.New(pool),
+		store,
 		logger,
 		validator,
+		pool,
 	}
 }
 
@@ -92,6 +95,13 @@ func (api API) PostTrips(w http.ResponseWriter, r *http.Request) *spec.Response 
 	if err := api.validator.Struct(body); err != nil {
 		return spec.PostTripsJSON400Response(spec.Error{Message: "Invalid fields: " + err.Error()})
 	}
+
+	tripID, err := api.store.CreateTrip(r.Context(), api.pool, body)
+	if err != nil {
+		return spec.PostTripsJSON400Response(spec.Error{Message: "Failed to create trip. Try again later."})
+	}
+
+	return spec.PostTripsJSON201Response(spec.CreateTripResponse{TripID: tripID.String()})
 }
 
 // Get a trip details.
